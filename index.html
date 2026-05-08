@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>サーミローグ・バベル 読了チェックリスト</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e1117;
+    --bg3: #1c2333;
+    --border: #2a3447;
+    --text: #d4dce8;
+    --text-dim: #6b7a96;
+    --text-muted: #4a5568;
+    --accent-ice: #7ec8e3;
+    --accent-ice-dim: #4a9ab5;
+    --snow: #e8f4f8;
+    --p1: #3b82f6; --p1-bg: rgba(59,130,246,0.1);
+    --p2: #10b981; --p2-bg: rgba(16,185,129,0.1);
+    --p3: #f59e0b; --p3-bg: rgba(245,158,11,0.1);
+    --p4: #a78bfa; --p4-bg: rgba(167,139,250,0.1);
+    --p5: #f87171; --p5-bg: rgba(248,113,113,0.1);
+    --p6: #e879f9; --p6-bg: rgba(232,121,249,0.1);
+    --done-opacity: 0.35;
+    --radius: 8px;
+    --radius-sm: 5px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  .header { background: linear-gradient(160deg, #0f1e38 0%, #0e1117 60%); border-bottom: 1px solid var(--border); padding: 28px 24px 24px; position: relative; overflow: hidden; }
+  .header::before { content: ''; position: absolute; top: -60px; right: -60px; width: 240px; height: 240px; background: radial-gradient(circle, rgba(126,200,227,0.08) 0%, transparent 70%); pointer-events: none; }
+  .header-eyebrow { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent-ice-dim); margin-bottom: 6px; }
+  .header-title { font-family: 'Noto Serif JP', serif; font-size: 22px; font-weight: 700; color: var(--snow); line-height: 1.3; margin-bottom: 20px; }
+
+  .progress-wrap { display: flex; align-items: center; gap: 12px; }
+  .progress-bar { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent-ice-dim), var(--accent-ice)); border-radius: 2px; transition: width 0.4s cubic-bezier(.4,0,.2,1); width: 0%; }
+  .progress-label { font-size: 12px; color: var(--text-dim); white-space: nowrap; min-width: 60px; text-align: right; }
+  .progress-pct { font-size: 12px; color: var(--accent-ice); font-weight: 700; min-width: 36px; }
+
+  .main { padding: 20px 16px 40px; max-width: 680px; margin: 0 auto; }
+
+  .phase { margin-bottom: 24px; }
+  .phase-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .phase-num { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+  .phase-title { font-size: 13px; font-weight: 700; letter-spacing: 0.04em; flex: 1; }
+  .phase-count { font-size: 11px; color: var(--text-muted); }
+
+  .item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: var(--radius); cursor: pointer; transition: background 0.15s, opacity 0.2s; border: 1px solid transparent; margin-bottom: 4px; -webkit-tap-highlight-color: transparent; user-select: none; }
+  .item:hover { background: var(--bg3); border-color: var(--border); }
+  .item:active { transform: scale(0.99); }
+  .item.done { opacity: var(--done-opacity); }
+  .item.done .item-title { text-decoration: line-through; text-decoration-color: var(--text-muted); }
+
+  .cb { width: 18px; height: 18px; min-width: 18px; border: 1.5px solid var(--border); border-radius: 4px; display: flex; align-items: center; justify-content: center; margin-top: 1px; transition: background 0.2s, border-color 0.2s; flex-shrink: 0; }
+  .item.done .cb { background: var(--accent-ice-dim); border-color: var(--accent-ice-dim); }
+  .cb-check { width: 10px; height: 10px; fill: none; stroke: white; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; opacity: 0; transition: opacity 0.15s; }
+  .item.done .cb-check { opacity: 1; }
+
+  .item-body { flex: 1; min-width: 0; }
+  .item-title-row { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 2px; }
+  .item-title { font-size: 13.5px; color: var(--text); line-height: 1.4; font-weight: 500; }
+  .item-note { font-size: 11.5px; color: var(--text-dim); line-height: 1.5; }
+
+  .tag { display: inline-flex; align-items: center; font-size: 10px; font-weight: 700; letter-spacing: 0.05em; padding: 1px 7px; border-radius: 3px; white-space: nowrap; flex-shrink: 0; }
+  .tag-episode { background: rgba(59,130,246,0.15); color: #93c5fd; }
+  .tag-manga   { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+  .tag-omnibus { background: rgba(167,139,250,0.15); color: #c4b5fd; }
+  .tag-opt     { background: rgba(107,114,128,0.18); color: #9ca3af; }
+
+  .p1 .phase-num { background: var(--p1-bg); color: var(--p1); }
+  .p1 .phase-title { color: var(--p1); }
+  .p1 .phase-header { border-bottom-color: rgba(59,130,246,0.2); }
+  .p2 .phase-num { background: var(--p2-bg); color: var(--p2); }
+  .p2 .phase-title { color: var(--p2); }
+  .p2 .phase-header { border-bottom-color: rgba(16,185,129,0.2); }
+  .p3 .phase-num { background: var(--p3-bg); color: var(--p3); }
+  .p3 .phase-title { color: var(--p3); }
+  .p3 .phase-header { border-bottom-color: rgba(245,158,11,0.2); }
+  .p4 .phase-num { background: var(--p4-bg); color: var(--p4); }
+  .p4 .phase-title { color: var(--p4); }
+  .p4 .phase-header { border-bottom-color: rgba(167,139,250,0.2); }
+  .p5 .phase-num { background: var(--p5-bg); color: var(--p5); }
+  .p5 .phase-title { color: var(--p5); }
+  .p5 .phase-header { border-bottom-color: rgba(248,113,113,0.2); }
+  .p6 .phase-num { background: var(--p6-bg); color: var(--p6); }
+  .p6 .phase-title { color: var(--p6); }
+  .p6 .phase-header { border-bottom-color: rgba(232,121,249,0.2); }
+
+  .footer { padding: 0 16px 32px; max-width: 680px; margin: 0 auto; display: flex; justify-content: center; }
+  .reset-btn { font-family: 'Noto Sans JP', sans-serif; font-size: 12px; color: var(--text-muted); background: transparent; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 6px 16px; cursor: pointer; transition: color 0.15s, border-color 0.15s; }
+  .reset-btn:hover { color: var(--text-dim); border-color: var(--text-muted); }
+
+  .complete-banner { display: none; margin: 0 16px 20px; max-width: 648px; margin-left: auto; margin-right: auto; padding: 12px 16px; background: rgba(126,200,227,0.08); border: 1px solid rgba(126,200,227,0.25); border-radius: var(--radius); text-align: center; font-size: 13px; color: var(--accent-ice); font-weight: 500; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-eyebrow">Arknights Story Guide</div>
+  <div class="header-title">サーミローグ・バベル 読了チェックリスト</div>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="pfill"></div></div>
+    <div class="progress-pct" id="ppct">0%</div>
+    <div class="progress-label" id="plabel">0 / 0 完了</div>
+  </div>
+</div>
+
+<div class="complete-banner" id="completeBanner">✦ すべてのシナリオを読了しました。</div>
+
+<div class="main" id="list"></div>
+<div class="footer"><button class="reset-btn" onclick="resetAll()">チェックをリセット</button></div>
+
+<script>
+const STORAGE_KEY = 'sarmi_checklist_v10';
+
+const phases = [
+  {
+    id: 1, cls: 'p1', title: 'メインストーリー軸（基礎）',
+    items: [
+      { title: 'メインストーリー 0〜4章',
+        note: 'テラの世界観・鉱石病・ロドスの基礎。すべての前提。' },
+      { title: 'サイドストーリー「騎兵と狩人」',
+        note: 'スカジの初登場。潮汐の下・狂人号の前提。5章前後に読む。' },
+      { title: 'オムニバス「戦地の逸話」（任意）',
+        note: 'ケルシーの背景やロドスの日常を描く短編集。',
+        tags: ['opt'] },
+      { title: 'メインストーリー 5〜6章',
+        note: '感染者問題・レユニオンとの対立が深まる。' },
+      { title: 'エピソード「Wの章」',
+        note: 'Wの過去と動機。7〜8章と並行して読む。',
+        tags: ['episode'] },
+      { title: 'メインストーリー 7〜8章',
+        note: 'ロドスとサルカズの対立が深まる。ケルシー関連の伏線も。' },
+      { title: 'エピソード「ケルシーの章」',
+        note: 'ケルシーの正体の伏線。8章後に読むと効果的。',
+        tags: ['episode'] },
+    ]
+  },
+  {
+    id: 2, cls: 'p2', title: '孤星軸（ライン生命軸）',
+    items: [
+      { title: 'サイドストーリー「孤島激震」',
+        note: 'ライン生命とサーミへの布石。ミュルジス・サリアが本格登場。' },
+      { title: 'サイドストーリー「遺塵の道を」',
+        note: 'ケルシーの過去・バベル前史。孤星でケルシーの全貌が動くため直前に読むと効果的。' },
+      { title: 'サイドストーリー「潮汐の下」',
+        note: 'スカジとライン生命の関わり。騎兵と狩人の後続。' },
+      { title: 'サイドストーリー「狂人号」',
+        note: '「潮汐の下」の直後の時系列。続けて読む。' },
+      { title: 'オムニバス「VIGILO -我が眼に映るまま-」',
+        note: 'ドクターのバベル参加経緯・プリースティスの伏線。孤星前に読むと効果的。',
+        tags: ['omnibus'] },
+      { title: '公式漫画「ロドス・オリジニウムレコード ライン生命」',
+        note: '公式サイトで無料公開。サリア・サイレンス・ミュルジスなど人間関係の把握に必読。',
+        tags: ['manga'] },
+      { title: 'サイドストーリー「翠玉の夢」',
+        note: '孤星の直接の前日譚。この半月後が孤星。必読。' },
+      { title: 'ロスモンティスのプロファイル（任意）',
+        note: '未所持でもwikiで読める。孤星でローキャンと対峙するシーンの重みが変わるため孤星前推奨。',
+        tags: ['opt'] },
+      { title: 'アーミヤモジュール「DWDB-221E」テキスト（任意）',
+        note: 'wikiで読める。孤星後半の保存者・テラの正体に関わる伏線テキスト。孤星前に読むと解像度が上がる。',
+        tags: ['opt'] },
+      { title: 'サイドストーリー「孤星」',
+        note: 'テラの秘密・ドクターの正体・保存者が大きく開示。アークナイツ屈指の重要シナリオ。' },
+    ]
+  },
+  {
+    id: 3, cls: 'p3', title: 'メインストーリー後半',
+    items: [
+      { title: 'メインストーリー 9〜13章',
+        note: 'ヴィクトリア編・テラ情勢の深化。バベルの文脈理解に必要。' },
+    ]
+  },
+  {
+    id: 4, cls: 'p4', title: 'サーミ補完',
+    items: [
+      { title: 'サイドストーリー「樹影にて眠る」',
+        note: 'エイクティルニル初登場・サーミの地域設定・ライン生命の動向。サーミローグ本体への直接の橋渡し。' },
+    ]
+  },
+  {
+    id: 5, cls: 'p5', title: 'サーミローグ本体',
+    items: [
+      { title: '統合戦略#4「探索者と銀氷の果て」',
+        note: 'ENDING1→2→3を経てENDING4「終始」へ。各ENDINGを順に積み上げることで最後の衝撃が増す。' },
+    ]
+  },
+  {
+    id: 6, cls: 'p6', title: 'バベル軸',
+    items: [
+      { title: 'サイドストーリー「闇夜に生きる」',
+        note: 'Wとバベルの背景。ロドス号の輸送護衛など、バベルの前史を補完。' },
+      { title: 'オムニバス「ニヤニヤ谷へ」',
+        note: 'ロドス号発掘〜輸送の経緯を別視点で描く。バベルの前史として必要。',
+        tags: ['omnibus'] },
+      { title: 'サイドストーリー「バベル」',
+        note: 'ドクターの正体・源石の真実・伝送ゲートの全貌が開示。アークナイツ最重要クラスのシナリオ。' },
+    ]
+  },
+];
+
+const tagDefs = {
+  episode: { label: 'エピソード', cls: 'tag-episode' },
+  manga:   { label: '漫画',      cls: 'tag-manga'   },
+  omnibus: { label: 'オムニバス', cls: 'tag-omnibus' },
+  opt:     { label: '任意',      cls: 'tag-opt'     },
+};
+
+function loadState() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; } }
+function saveState(s) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch {} }
+function resetAll() { if (!confirm('チェックをすべてリセットしますか？')) return; saveState({}); render(); }
+function countTotal() { let n = 0; phases.forEach(p => p.items.forEach(() => n++)); return n; }
+
+function render() {
+  const state = loadState();
+  const list = document.getElementById('list');
+  list.innerHTML = '';
+  const total = countTotal();
+  let done = 0;
+  phases.forEach(p => p.items.forEach((_, i) => { if (state[`${p.id}-${i}`]) done++; }));
+  const pct = total ? Math.round(done / total * 100) : 0;
+  document.getElementById('pfill').style.width = pct + '%';
+  document.getElementById('ppct').textContent = pct + '%';
+  document.getElementById('plabel').textContent = `${done} / ${total} 完了`;
+  document.getElementById('completeBanner').style.display = (done === total && total > 0) ? 'block' : 'none';
+
+  phases.forEach(p => {
+    const phaseEl = document.createElement('div');
+    phaseEl.className = `phase ${p.cls}`;
+
+    const hdr = document.createElement('div');
+    hdr.className = 'phase-header';
+    const num = document.createElement('div'); num.className = 'phase-num'; num.textContent = p.id;
+    const ttl = document.createElement('div'); ttl.className = 'phase-title'; ttl.textContent = p.title;
+    const cnt = document.createElement('div'); cnt.className = 'phase-count';
+    cnt.textContent = `${p.items.filter((_,i) => state[`${p.id}-${i}`]).length}/${p.items.length}`;
+    hdr.appendChild(num); hdr.appendChild(ttl); hdr.appendChild(cnt);
+    phaseEl.appendChild(hdr);
+
+    p.items.forEach((item, i) => {
+      const key = `${p.id}-${i}`;
+      const isDone = !!state[key];
+      const row = document.createElement('div');
+      row.className = 'item' + (isDone ? ' done' : '');
+      row.addEventListener('click', () => { const s = loadState(); s[key] = !s[key]; saveState(s); render(); });
+
+      const cb = document.createElement('div');
+      cb.className = 'cb';
+      cb.innerHTML = `<svg class="cb-check" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg>`;
+
+      const body = document.createElement('div'); body.className = 'item-body';
+      const titleRow = document.createElement('div'); titleRow.className = 'item-title-row';
+      const titleEl = document.createElement('span'); titleEl.className = 'item-title'; titleEl.textContent = item.title;
+      titleRow.appendChild(titleEl);
+
+      if (item.tags) {
+        item.tags.forEach(t => {
+          const def = tagDefs[t]; if (!def) return;
+          const tag = document.createElement('span');
+          tag.className = `tag ${def.cls}`; tag.textContent = def.label;
+          titleRow.appendChild(tag);
+        });
+      }
+
+      const noteEl = document.createElement('div'); noteEl.className = 'item-note'; noteEl.textContent = item.note;
+      body.appendChild(titleRow); body.appendChild(noteEl);
+      row.appendChild(cb); row.appendChild(body);
+      phaseEl.appendChild(row);
+    });
+
+    list.appendChild(phaseEl);
+  });
+}
+
+render();
+</script>
+</body>
+</html>
